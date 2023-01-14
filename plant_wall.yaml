@@ -1,0 +1,11 @@
+light:
+  plan:
+    - on: '08:00'
+      off: '20:00' 
+
+pump:
+  single: True # if just one and one pump should run
+  plan:
+    - on: '07:00'
+      off: '08:00'
+
