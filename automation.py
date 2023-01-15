@@ -50,18 +50,19 @@ def is_paused(chanel, pause_start:float=0.0, pause_duration:float=PAUSE_DURATION
     chanel_is_pressed = GPIO.input(chanel) is GPIO.LOW
     in_pause = pause_start > 0
     in_reset_wait_time = 0 < time.time() - pause_start < pause_reset_wait
+    in_turn_on_wait = time.time() - pause_start < 0
 
     # It is not in pause, and the button is pressed
-    if chanel_is_pressed and not in_pause: 
+    if chanel_is_pressed and not in_pause and not in_turn_on_wait: 
         return True, time.time()
     
     # It is in pause, not in the reset wait time, and the button is presset - reset
     if chanel_is_pressed and in_pause and not in_reset_wait_time:
-        return False, float(-1)
+        return False, float(-PAUSE_RESET_WAIT)
     
     # Time is over
     if in_pause and time.time() - pause_duration > pause_start:
-        return False, float(-1)
+        return False, float(-PAUSE_RESET_WAIT)
 
     # It is in pause
     return True, pause_start
