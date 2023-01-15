@@ -26,6 +26,7 @@ PUMP_PAUSE = 21
 RELE_4 = 22 # Not in use
 
 # Setting up the board
+GPIO.cleanup()
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(LIGHT_RELE_PLANT_WALL, GPIO.OUT)
 GPIO.setup(LIGHT_TOGLE_ON, GPIO.IN)
@@ -114,4 +115,9 @@ def main(light_plan, pump_plan) -> None:
         n+=1
 
 if __name__ == '__main__': 
-    main(light_plan, pump_plan)
+    try: 
+        main(light_plan, pump_plan)
+    except:
+        'Something went wrong in the main loop'
+    finally:
+        GPIO.cleanup()
