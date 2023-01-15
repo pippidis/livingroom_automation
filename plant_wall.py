@@ -66,7 +66,7 @@ def is_paused(chanel, pause_start:float=0.0, pause_duration:float=PAUSE_DURATION
     # It is in pause
     return True, pause_start
 
-def state_from_plan(plan, when:float=datetime.time()) -> bool:
+def state_from_plan(plan, when:float=datetime.now()) -> bool:
     '''returns the desired state the given plant now'''
     for period in plan: 
         on = when.replace(hour=period['on']['hr'], minute=period['on']['min'])
