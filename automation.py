@@ -26,7 +26,7 @@ PUMP_PAUSE = 21
 RELE_4 = 22 # Not in use
 
 # Setting up the board
-print(__name__, 'Setting up GPIO')
+print('automation.py','Setting up GPIO')
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(LIGHT_RELE_PLANT_WALL, GPIO.OUT)
 GPIO.setup(LIGHT_TOGLE_ON, GPIO.IN)
@@ -84,34 +84,34 @@ def control_light(light_plan, pause_start) -> float:
         return pause_start
 
     # The togle: 
-    togle_on_state = GPIO.input(LIGHT_TOGLE_ON) is GPIO.HIGH
-    togle_off_state = GPIO.input(LIGHT_TOGLE_OFF) is GPIO.HIGH
+    togle_on_state = GPIO.input(LIGHT_TOGLE_ON) is GPIO.LOW
+    togle_off_state = GPIO.input(LIGHT_TOGLE_OFF) is GPIO.LOW
     if togle_on_state: 
-        GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
+        GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
         return pause_start
     if togle_off_state: 
-        GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
+        GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
         return pause_start
 
     # The plan
     if state_from_plan(light_plan):
-        GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
+        GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
         return pause_start
     
     # Off is not on
-    GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
+    GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
     return pause_start
 
 def main(light_plan, pump_plan, testing=False) -> None:
     '''The main function, runs the whole thing'''
     light_pause_start:float = -1
-    print(__name__, 'Entering main loop')
+    print('automation.py','Entering main loop')
     while True:
         if testing:
-            print(__name__, '-'*50)
-            print(__name__, 'LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_ON))
-            print(__name__, 'LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_OFF))
-            print(__name__, 'LIGHT_TOGLE_ON', GPIO.input(LIGHT_PAUSE))
+            print('automation.py','-'*50)
+            print('automation.py','LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_ON))
+            print('automation.py','LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_OFF))
+            print('automation.py','LIGHT_TOGLE_ON', GPIO.input(LIGHT_PAUSE))
 
         light_pause_start = control_light(light_plan, pause_start=light_pause_start)
     
