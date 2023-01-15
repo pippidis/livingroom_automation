@@ -26,7 +26,7 @@ PUMP_PAUSE = 21
 RELE_4 = 22 # Not in use
 
 # Setting up the board
-GPIO.cleanup()
+print('Setting up GPIO')
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(LIGHT_RELE_PLANT_WALL, GPIO.OUT)
 GPIO.setup(LIGHT_TOGLE_ON, GPIO.IN)
@@ -105,6 +105,7 @@ def control_light(light_plan, pause_start) -> float:
 def main(light_plan, pump_plan) -> None:
     '''The main function, runs the whole thing'''
     light_pause_start:float = -1
+    print('Entering main loop')
     while True:
         light_pause_start = control_light(light_plan, pause_start=light_pause_start)
     
