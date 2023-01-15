@@ -87,19 +87,19 @@ def control_light(light_plan, pause_start) -> float:
     togle_on_state = GPIO.input(LIGHT_TOGLE_ON) is GPIO.LOW
     togle_off_state = GPIO.input(LIGHT_TOGLE_OFF) is GPIO.LOW
     if togle_on_state: 
-        GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
+        GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
         return pause_start
     if togle_off_state: 
-        GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
+        GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
         return pause_start
 
     # The plan
     if state_from_plan(light_plan):
-        GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
+        GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
         return pause_start
     
     # Off is not on
-    GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
+    GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
     return pause_start
 
 def main(light_plan, pump_plan, testing=False) -> None:
