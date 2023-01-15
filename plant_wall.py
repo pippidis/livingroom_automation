@@ -117,9 +117,8 @@ def main(light_plan, pump_plan, testing=False) -> None:
     
         print('This is probably a test')
         time.sleep(0.05) # To reduce load
+        if testing: time.sleep(1) #reduces the speed
 
-        if n>10000: break
-        n+=1
 
 if __name__ == '__main__': 
     try: 
