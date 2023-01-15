@@ -58,11 +58,11 @@ def is_paused(chanel, pause_start:float=0.0, pause_duration:float=PAUSE_DURATION
     
     # It is in pause, not in the reset wait time, and the button is presset - reset
     if chanel_is_pressed and in_pause and not in_reset_wait_time:
-        return False, float(-PAUSE_RESET_WAIT)
+        return False, float(time.time()-PAUSE_RESET_WAIT)
     
     # Time is over
     if in_pause and time.time() - pause_duration > pause_start:
-        return False, float(-PAUSE_RESET_WAIT)
+        return False, float(time.time()-PAUSE_RESET_WAIT)
 
     # It is in pause
     return True, pause_start
@@ -80,6 +80,7 @@ def control_light(light_plan, pause_start) -> float:
     '''Logic to controll the light'''
     # Pause logic:
     paused, pause_start = is_paused(LIGHT_PAUSE, pause_start)
+    print('automation.py','paused, pause_start', paused, pause_start)
     if paused:
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
         return pause_start
