@@ -26,7 +26,7 @@ PUMP_PAUSE = 21
 RELE_4 = 22 # Not in use
 
 # Setting up the board
-print('Setting up GPIO')
+print(__name__, 'Setting up GPIO')
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(LIGHT_RELE_PLANT_WALL, GPIO.OUT)
 GPIO.setup(LIGHT_TOGLE_ON, GPIO.IN)
@@ -49,24 +49,24 @@ def is_paused(chanel, pause_start:float=0.0, pause_duration:float=PAUSE_DURATION
     '''Return if the thing is paused or not'''
     chanel_is_pressed = GPIO.input(chanel) is GPIO.HIGH
     in_pause = pause_start > 0
-    in_reset_wait_time = 0 < time.now() - pause_start < pause_reset_wait
+    in_reset_wait_time = 0 < time.time() - pause_start < pause_reset_wait
 
     # It is not in pause, and the button is pressed
     if chanel_is_pressed and not in_pause: 
-        return True, time.now()
+        return True, time.time()
     
     # It is in pause, not in the reset wait time, and the button is presset - reset
     if chanel_is_pressed and in_pause and not in_reset_wait_time:
         return False, float(-1)
     
     # Time is over
-    if in_pause and time.now() - pause_duration > pause_start:
+    if in_pause and time.time() - pause_duration > pause_start:
         return False, float(-1)
 
     # It is in pause
     return True, pause_start
 
-def state_from_plan(plan, when:float=datetime.now()) -> bool:
+def state_from_plan(plan, when:float=datetime.time()) -> bool:
     '''returns the desired state the given plant now'''
     for period in plan: 
         on = when.replace(hour=period['on']['hr'], minute=period['on']['min'])
@@ -105,13 +105,13 @@ def control_light(light_plan, pause_start) -> float:
 def main(light_plan, pump_plan, testing=False) -> None:
     '''The main function, runs the whole thing'''
     light_pause_start:float = -1
-    print('Entering main loop')
+    print(__name__, 'Entering main loop')
     while True:
         if testing:
-            print('-'*50)
-            print('LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_ON))
-            print('LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_OFF))
-            print('LIGHT_TOGLE_ON', GPIO.input(LIGHT_PAUSE))
+            print(__name__, '-'*50)
+            print(__name__, 'LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_ON))
+            print(__name__, 'LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_OFF))
+            print(__name__, 'LIGHT_TOGLE_ON', GPIO.input(LIGHT_PAUSE))
 
         light_pause_start = control_light(light_plan, pause_start=light_pause_start)
     
