@@ -102,11 +102,17 @@ def control_light(light_plan, pause_start) -> float:
     GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
     return pause_start
 
-def main(light_plan, pump_plan) -> None:
+def main(light_plan, pump_plan, testing=False) -> None:
     '''The main function, runs the whole thing'''
     light_pause_start:float = -1
     print('Entering main loop')
     while True:
+        if testing:
+            print('-'*50)
+            print('LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_ON))
+            print('LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_OFF))
+            print('LIGHT_TOGLE_ON', GPIO.input(LIGHT_PAUSE))
+
         light_pause_start = control_light(light_plan, pause_start=light_pause_start)
     
         print('This is probably a test')
@@ -117,8 +123,8 @@ def main(light_plan, pump_plan) -> None:
 
 if __name__ == '__main__': 
     try: 
-        main(light_plan, pump_plan)
-    except:
-        'Something went wrong in the main loop'
+        main(light_plan, pump_plan, testing=True)
+    except Exception as e:
+        print('Something went wrong in the main loop', e) 
     finally:
         GPIO.cleanup()
