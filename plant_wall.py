@@ -103,7 +103,7 @@ def control_light(light_plan, pause_start) -> float:
 
 def main(light_plan, pump_plan) -> None:
     '''The main function, runs the whole thing'''
-
+    light_pause_start:float = -1
     while True:
         light_pause_start = control_light(light_plan, pause_start=light_pause_start)
     
