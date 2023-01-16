@@ -43,7 +43,7 @@ GPIO.setup(PUMP_PAUSE, GPIO.IN)
 PAUSE_DURATION = 7200 # secounds
 PAUSE_LATCH = 5 # secounds - How long before it can be reset
 
-def paused(status:float=0, pressed:bool=False, when=time.time(), duration:float=PAUSE_DURATION, latch:float=PAUSE_LATCH)-> tuple[float, bool]:
+def is_paused(status:float=0, pressed:bool=False, when=time.time(), duration:float=PAUSE_DURATION, latch:float=PAUSE_LATCH)-> tuple[float, bool]:
     '''Return of it is paused or not'''
     # Getting a couple of logical situations
     time_from_status = abs(when) - abs(status) 
@@ -82,36 +82,36 @@ def state_from_plan(plan, when:float=datetime.now()) -> bool:
             return True
     return False
 
-def control_light(light_plan, light_pause_status) -> float:
+def control_light(plan, pause_status) -> float:
     '''Logic to controll the light'''
     # Pause logic:
-    light_pause_status, light_paused = paused(status=light_pause_status, pressed=GPIO.input(LIGHT_PAUSE) is GPIO.LOW)
-    if light_paused:
+    pause_status, paused = is_paused(status=pause_status, pressed=GPIO.input(LIGHT_PAUSE) is GPIO.LOW)
+    if paused:
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
-        return light_pause_status
+        return pause_status
 
     # The togle: 
     togle_on_state = GPIO.input(LIGHT_TOGLE_ON) is GPIO.LOW
     togle_off_state = GPIO.input(LIGHT_TOGLE_OFF) is GPIO.LOW
     if togle_on_state: 
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
-        return light_pause_status
+        return pause_status
     if togle_off_state: 
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
-        return light_pause_status
+        return pause_status
 
     # The plan
     if state_from_plan(light_plan):
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
-        return light_pause_status
+        return pause_status
     
     # Off is not on
     GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
-    return light_pause_status
+    return pause_status
 
 def main(light_plan, pump_plan, testing=False) -> None:
     '''The main function, runs the whole thing'''
-    light_pause_start:float = -1
+    light_pause_status:float = -1
     print('automation.py','Entering main loop')
     while True:
         if testing:
@@ -119,9 +119,9 @@ def main(light_plan, pump_plan, testing=False) -> None:
             print('automation.py','LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_ON))
             print('automation.py','LIGHT_TOGLE_OFF', GPIO.input(LIGHT_TOGLE_OFF))
             print('automation.py','LIGHT_PAUSE', GPIO.input(LIGHT_PAUSE))
-            print('automation.py','light_pause_start', light_pause_start)
+            print('automation.py','light_pause_status', light_pause_status)
 
-        light_pause_start = control_light(light_plan, light_pause_status=light_pause_start)
+        light_pause_status = control_light(plan=light_plan, pause_status=light_pause_status)
 
         time.sleep(0.05) # To reduce load
         if testing: time.sleep(1) #reduces the speed
