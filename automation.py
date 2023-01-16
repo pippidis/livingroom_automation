@@ -43,14 +43,14 @@ GPIO.setup(PUMP_PAUSE, GPIO.IN)
 PAUSE_DURATION = 7200 # secounds
 PAUSE_LATCH = 5 # secounds - How long before it can be reset
 
-def paused(status:float=0, pressed:bool=False, when:time=time.time(), duration:float=PAUSE_DURATION, latch:float=PAUSE_LATCH)-> tuple[float, bool]:
+def paused(status:float=0, pressed:bool=False, when=time.time(), duration:float=PAUSE_DURATION, latch:float=PAUSE_LATCH)-> tuple[float, bool]:
     '''Return of it is paused or not'''
     # Getting a couple of logical situations
-    time_from_status = when - abs(status) 
+    time_from_status = abs(when) - abs(status) 
     status_is_positive = status > 0
     status_is_negative = status < 0
     status_is_null = status == 0
-    print(__file__, ':', 'pause', ':', status, pressed, time_from_status, status_is_positive, status_is_negative, status_is_null)
+    print(__file__, ':', 'pause', ':', status, pressed, when, time_from_status, status_is_positive, status_is_negative, status_is_null)
     
     # If in latch: 
     if time_from_status < PAUSE_LATCH:
