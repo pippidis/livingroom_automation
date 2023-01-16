@@ -48,7 +48,7 @@ def paused(status:float=0, pressed:bool=False, when:time=time.time(), duration:f
     '''Return of it is paused or not'''
     print(__file__, ':', 'paused : status ', status, ': pressed ', pressed)
     if status < 0 and when + status - latch > 0: status = 0 # Latch duration over
-    print('automation.py :')
+    print('automation.py :', 'status', status)
     if not pressed and status > 0: return status, True 
     if not pressed and status <= 0: return status, False
 
