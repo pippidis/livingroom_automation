@@ -41,7 +41,7 @@ GPIO.setup(PUMP_PAUSE, GPIO.IN)
 
 # Some standard variables
 PAUSE_DURATION = 7200 # secounds
-PAUSE_LATCH = 2 # secounds - How long before it can be reset
+PAUSE_LATCH = 5 # secounds - How long before it can be reset
 
 def paused(status:float=0, pressed:bool=False, when:time=time.time(), duration:float=PAUSE_DURATION, latch:float=PAUSE_LATCH)-> tuple[float, bool]:
     '''Return of it is paused or not'''
@@ -50,17 +50,18 @@ def paused(status:float=0, pressed:bool=False, when:time=time.time(), duration:f
     status_is_positive = status > 0
     status_is_negative = status < 0
     status_is_null = status == 0
-
     print(__file__, ':', 'pause', ':', status, pressed, time_from_status, status_is_positive, status_is_negative, status_is_null)
     
     # If in latch: 
     if time_from_status < PAUSE_LATCH:
+        print('In Latch')
         if status_is_positive: return status, True
         if status_is_negative: return status, False
         if status_is_null: return status, False
 
     # If the button is pressed: 
     if pressed: 
+        print('Pressed')
         if status_is_positive: return -when, False
         if status_is_negative: return when, True
         if status_is_null: return when, True
@@ -84,9 +85,7 @@ def state_from_plan(plan, when:float=datetime.now()) -> bool:
 def control_light(light_plan, light_pause_status) -> float:
     '''Logic to controll the light'''
     # Pause logic:
-    light_pause_button_pressed = GPIO.input(LIGHT_PAUSE) is GPIO.LOW
-    light_pause_status, light_paused = paused(light_pause_status, light_pause_button_pressed)
-    print('automation.py','paused, pause_start', light_paused, light_pause_status)
+    light_pause_status, light_paused = paused(status=light_pause_status, pressed=GPIO.input(LIGHT_PAUSE) is GPIO.LOW)
     if light_paused:
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
         return light_pause_status
@@ -122,9 +121,8 @@ def main(light_plan, pump_plan, testing=False) -> None:
             print('automation.py','LIGHT_PAUSE', GPIO.input(LIGHT_PAUSE))
             print('automation.py','light_pause_start', light_pause_start)
 
-        light_pause_start = control_light(light_plan, light_pause_start)
-    
-        print('This is probably a test')
+        light_pause_start = control_light(light_plan, light_pause_status=light_pause_start)
+
         time.sleep(0.05) # To reduce load
         if testing: time.sleep(1) #reduces the speed
 
