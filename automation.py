@@ -106,7 +106,7 @@ def main(light_plan, pump_plan, testing=False) -> None:
             print('automation.py','LIGHT_PAUSE', GPIO.input(LIGHT_PAUSE))
             print('automation.py','light_pause_start', light_pause_start)
 
-        light_pause_start = control_light(light_plan, pause_start=light_pause_start)
+        light_pause_start = control_light(light_plan, light_pause_start)
     
         print('This is probably a test')
         time.sleep(0.05) # To reduce load
