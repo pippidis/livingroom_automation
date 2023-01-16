@@ -59,8 +59,7 @@ def is_paused(status:float=0, pressed:bool=False, when=None, duration:float=PAUS
     status_is_positive = status > 0
     status_is_negative = status < 0
     status_is_null = status == 0
-    print(__file__, ':', 'pause', ':', status, pressed, when, time_from_status, status_is_positive, status_is_negative, status_is_null)
-    
+     
     # If in latch: 
     if time_from_status < PAUSE_LATCH:
         print('In Latch')
