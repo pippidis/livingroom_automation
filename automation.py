@@ -39,19 +39,19 @@ GPIO.setup(PUMP_TOGLE_ON, GPIO.IN)
 GPIO.setup(PUMP_TOGLE_OFF, GPIO.IN)
 GPIO.setup(PUMP_PAUSE, GPIO.IN)
 
-
 # Some standard variables
 PAUSE_DURATION = 7200 # secounds
 PAUSE_LATCH = 2 # secounds - How long before it can be reset
 
 def paused(status:float=0, pressed:bool=False, when:time=time.time(), duration:float=PAUSE_DURATION, latch:float=PAUSE_LATCH)-> tuple[float, bool]:
     '''Return of it is paused or not'''
-    print(__file__, ':', 'paused : status ', status, ': pressed ', pressed)
     # Getting a couple of logical situations
     time_from_status = when - abs(status) 
     status_is_positive = status > 0
     status_is_negative = status < 0
     status_is_null = status == 0
+
+    print(__file__, ':', 'pause', ':', status, pressed, time_from_status, status_is_positive, status_is_negative, status_is_null)
     
     # If in latch: 
     if time_from_status < PAUSE_LATCH:
@@ -71,7 +71,6 @@ def paused(status:float=0, pressed:bool=False, when:time=time.time(), duration:f
 
     # Fallback
     return status, False
-
 
 def state_from_plan(plan, when:float=datetime.now()) -> bool:
     '''returns the desired state the given plant now'''
