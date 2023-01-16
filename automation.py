@@ -49,7 +49,7 @@ GPIO.setup(RELE_4, GPIO.OUT)
 
 # Some standard variables
 PAUSE_DURATION = 7200 # secounds
-PAUSE_LATCH = 5 # secounds - How long before it can be reset
+PAUSE_LATCH = 3 # secounds - How long before it can be reset
 
 def is_paused(status:float=0, pressed:bool=False, when=None, duration:float=PAUSE_DURATION, latch:float=PAUSE_LATCH)-> tuple[float, bool]:
     '''Return of it is paused or not'''
@@ -170,11 +170,12 @@ def control_pumps(plan, pause_status) -> float:
 
 def main(light_plan, pump_plan, testing=True) -> None:
     '''The main function, runs the whole thing'''
-    light_pause_status:float = -1
+    light_pause_status:float = 0
+    pump_pause_status:float = 0
     print(__file__,'Entering main loop')
     while True:
         light_pause_status = control_light(plan=light_plan, pause_status=light_pause_status)
-        pump_plan_status = control_pumps(plan=pump_plan, pause_status=pump_plan_status)
+        pump_pause_status = control_pumps(plan=pump_plan, pause_status=pump_pause_status)
         if testing:
             print('-'*60)
             print(__file__, 'LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_ON))
