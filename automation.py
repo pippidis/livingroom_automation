@@ -43,8 +43,9 @@ GPIO.setup(PUMP_PAUSE, GPIO.IN)
 PAUSE_DURATION = 7200 # secounds
 PAUSE_LATCH = 5 # secounds - How long before it can be reset
 
-def is_paused(status:float=0, pressed:bool=False, when=time.time(), duration:float=PAUSE_DURATION, latch:float=PAUSE_LATCH)-> tuple[float, bool]:
+def is_paused(status:float=0, pressed:bool=False, when=None, duration:float=PAUSE_DURATION, latch:float=PAUSE_LATCH)-> tuple[float, bool]:
     '''Return of it is paused or not'''
+    if not when: when = time.time() # sets the current time as when
     # Getting a couple of logical situations
     time_from_status = abs(when) - abs(status) 
     status_is_positive = status > 0
