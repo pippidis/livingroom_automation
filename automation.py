@@ -42,18 +42,34 @@ GPIO.setup(PUMP_PAUSE, GPIO.IN)
 
 # Some standard variables
 PAUSE_DURATION = 7200 # secounds
-PAUSER_LATCH = 2 # secounds - How long before it can be reset
+PAUSE_LATCH = 2 # secounds - How long before it can be reset
 
-def paused(status:float=0, pressed:bool=False, when:time=time.time(), duration:float=PAUSE_DURATION, latch:float=PAUSER_LATCH)-> tuple[float, bool]:
+def paused(status:float=0, pressed:bool=False, when:time=time.time(), duration:float=PAUSE_DURATION, latch:float=PAUSE_LATCH)-> tuple[float, bool]:
     '''Return of it is paused or not'''
     print(__file__, ':', 'paused : status ', status, ': pressed ', pressed)
-    if status < 0 and when + status - latch > 0: status = 0 # Latch duration over
-    print('automation.py :', 'status', status)
-    if not pressed and status > 0: return status, True 
-    if not pressed and status <= 0: return status, False
+    # Getting a couple of logical situations
+    time_from_status = when - abs(status) 
+    status_is_positive = status > 0
+    status_is_negative = status < 0
+    status_is_null = status == 0
+    
+    # If in latch: 
+    if time_from_status < PAUSE_LATCH:
+        if status_is_positive: return status, True
+        if status_is_negative: return status, False
+        if status_is_null: return status, False
 
-    if pressed and status == 0: return when, True # Starting pause
-    if pressed and status > 0 and when - status > latch: return -when, False # Reset
+    # If the button is pressed: 
+    if pressed: 
+        if status_is_positive: return -when, False
+        if status_is_negative: return when, True
+        if status_is_null: return when, True
+    
+    # If over time: 
+    if time_from_status > duration: 
+        if status_is_positive: return 0, False 
+
+    # Fallback
     return status, False
 
 
