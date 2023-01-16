@@ -71,6 +71,10 @@ def is_paused(status:float=0, pressed:bool=False, when=None, duration:float=PAUS
     if time_from_status > duration: 
         if status_is_positive: return 0, False 
 
+    # If it is in pause, but not over time: 
+    if status_is_positive: 
+        return status, True
+        
     # Fallback
     return status, False
 
