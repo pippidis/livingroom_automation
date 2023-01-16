@@ -46,14 +46,16 @@ PAUSER_LATCH = 2 # secounds - How long before it can be reset
 
 def paused(status:float=0, pressed:bool=False, when:time=time.time(), duration:float=PAUSE_DURATION, latch:float=PAUSER_LATCH)-> tuple[float, bool]:
     '''Return of it is paused or not'''
-    print('automation.py :', 'paused : status ', status, ': pressed ', pressed)
+    print(__file__, ':', 'paused : status ', status, ': pressed ', pressed)
     if status < 0 and when + status - latch > 0: status = 0 # Latch duration over
+    print('automation.py :')
     if not pressed and status > 0: return status, True 
     if not pressed and status <= 0: return status, False
 
     if pressed and status == 0: return when, True # Starting pause
     if pressed and status > 0 and when - status > latch: return -when, False # Reset
     return status, False
+
 
 def state_from_plan(plan, when:float=datetime.now()) -> bool:
     '''returns the desired state the given plant now'''
