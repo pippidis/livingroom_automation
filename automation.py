@@ -44,10 +44,9 @@ GPIO.setup(PUMP_PAUSE, GPIO.IN)
 PAUSE_DURATION = 7200 # secounds
 PAUSER_LATCH = 2 # secounds - How long before it can be reset
 
-
-
 def paused(status:float=0, pressed:bool=False, when:time=time.time(), duration:float=PAUSE_DURATION, latch:float=PAUSER_LATCH)-> tuple[float, bool]:
     '''Return of it is paused or not'''
+    print('automation.py :', 'paused : status ', status, ': pressed ', pressed)
     if status < 0 and when + status - latch > 0: status = 0 # Latch duration over
     if not pressed and status > 0: return status, True 
     if not pressed and status <= 0: return status, False
