@@ -88,7 +88,7 @@ def control_light(light_plan, light_pause_status) -> float:
     light_pause_button_pressed = GPIO.input(LIGHT_PAUSE) is GPIO.LOW
     light_pause_status, light_paused = paused(light_pause_status, light_pause_button_pressed)
     print('automation.py','paused, pause_start', light_paused, light_pause_status)
-    if paused:
+    if light_paused:
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
         return light_pause_status
 
