@@ -42,34 +42,19 @@ GPIO.setup(PUMP_PAUSE, GPIO.IN)
 
 # Some standard variables
 PAUSE_DURATION = 7200 # secounds
-PAUSE_RESET_WAIT = 2 # secounds - How long before it can be reset
+PAUSER_LATCH = 2 # secounds - How long before it can be reset
 
 
-def is_paused(chanel, pause_start:float=-1.0, pause_duration:float=PAUSE_DURATION, pause_reset_wait:float=PAUSE_RESET_WAIT) -> tuple[bool, float]:
-    '''Return if the thing is paused or not'''
-    chanel_is_pressed = GPIO.input(chanel) is GPIO.LOW
-    in_pause = pause_start > 0 # If the time is positive the it is in pause
-    in_reset_wait_time = in_pause & pause_start + pause_reset_wait < time.time() # It is in reset wait if it is in pause ++
-    in_turn_on_wait = time.time() + pause_start < 0
-    in_freez = in_reset_wait_time or in_turn_on_wait
 
-    if not chanel_is_pressed and not in_pause:
-        return False, pause_start
+def paused(status:float=0, pressed:bool=False, when:time=time.time(), duration:float=PAUSE_DURATION, latch:float=PAUSER_LATCH)-> tuple[float, bool]:
+    '''Return of it is paused or not'''
+    if status < 0 and when - status - latch > 0: status = 0 # Latch duration over
+    if not pressed and status > 0: return status, True 
+    if not pressed and status <= 0: return status, False
 
-    # It is not in pause, and the button is pressed
-    if chanel_is_pressed and not in_pause and not in_turn_on_wait: 
-        return True, time.time()
-    
-    # It is in pause, not in the reset wait time, and the button is presset - reset
-    if chanel_is_pressed and in_pause and not in_reset_wait_time:
-        return False, float(-time.time()-PAUSE_RESET_WAIT)
-    
-    # Time is over
-    if in_pause and time.time() - pause_duration > pause_start:
-        return False, float(-time.time()-PAUSE_RESET_WAIT)
-
-    # It is in pause
-    return True, pause_start
+    if pressed and status == 0: return when, True # Starting pause
+    if pressed and status > 0 and when - status > latch: return -when, False # Reset
+    return status, False
 
 def state_from_plan(plan, when:float=datetime.now()) -> bool:
     '''returns the desired state the given plant now'''
@@ -80,33 +65,34 @@ def state_from_plan(plan, when:float=datetime.now()) -> bool:
             return True
     return False
 
-def control_light(light_plan, pause_start) -> float:
+def control_light(light_plan, light_pause_status) -> float:
     '''Logic to controll the light'''
     # Pause logic:
-    paused, pause_start = is_paused(LIGHT_PAUSE, pause_start)
-    print('automation.py','paused, pause_start', paused, pause_start)
+    light_pause_button_pressed = GPIO.input(LIGHT_PAUSE) is GPIO.LOW
+    light_pause_status, light_paused = paused(light_pause_status, light_pause_button_pressed)
+    print('automation.py','paused, pause_start', light_paused, light_pause_status)
     if paused:
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
-        return pause_start
+        return light_pause_status
 
     # The togle: 
     togle_on_state = GPIO.input(LIGHT_TOGLE_ON) is GPIO.LOW
     togle_off_state = GPIO.input(LIGHT_TOGLE_OFF) is GPIO.LOW
     if togle_on_state: 
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
-        return pause_start
+        return light_pause_status
     if togle_off_state: 
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
-        return pause_start
+        return light_pause_status
 
     # The plan
     if state_from_plan(light_plan):
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
-        return pause_start
+        return light_pause_status
     
     # Off is not on
     GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
-    return pause_start
+    return light_pause_status
 
 def main(light_plan, pump_plan, testing=False) -> None:
     '''The main function, runs the whole thing'''
