@@ -8,7 +8,7 @@ light_plan = [
 ]
 
 pump_plan = [
-    {'on':{'hr':7, 'min':0}, 'off':{'hr':8, 'min':0}}
+    {'on':{'hr':7, 'min':0}, 'off':{'hr':18, 'min':0}}
 ]
 
 # Defining pins
@@ -23,10 +23,13 @@ PUMP_TOGLE_ON = 15
 PUMP_TOGLE_OFF = 19
 PUMP_PAUSE = 21 
 
+FAN_ON = 26
+FAN_OFF = 24
+RESET = 23
 RELE_4 = 22 # Not in use
 
 # Setting up the board
-print('automation.py','Setting up GPIO')
+print(__file__,'Setting up GPIO')
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(LIGHT_RELE_PLANT_WALL, GPIO.OUT)
 GPIO.setup(LIGHT_TOGLE_ON, GPIO.IN)
@@ -38,6 +41,11 @@ GPIO.setup(PUMP_RELE_RIGHT, GPIO.OUT)
 GPIO.setup(PUMP_TOGLE_ON, GPIO.IN)
 GPIO.setup(PUMP_TOGLE_OFF, GPIO.IN)
 GPIO.setup(PUMP_PAUSE, GPIO.IN)
+
+GPIO.setup(FAN_ON, GPIO.IN)
+GPIO.setup(FAN_OFF, GPIO.IN)
+GPIO.setup(RESET, GPIO.IN)
+GPIO.setup(RELE_4, GPIO.OUT)
 
 # Some standard variables
 PAUSE_DURATION = 7200 # secounds
@@ -74,7 +82,7 @@ def is_paused(status:float=0, pressed:bool=False, when=None, duration:float=PAUS
     # If it is in pause, but not over time: 
     if status_is_positive: 
         return status, True
-        
+
     # Fallback
     return status, False
 
@@ -87,6 +95,14 @@ def state_from_plan(plan, when:float=datetime.now()) -> bool:
             return True
     return False
 
+def alternate_pumps(period:int=5) -> str:
+    '''Alternate the two pumps based on the time'''
+    minutes = time.time() / 60 # Get the number of minutes since the beginning of time
+    time_left = minutes % period
+    half_period = period / 2
+    if time_left >= half_period: return 'left'
+    return 'right'
+    
 def control_light(plan, pause_status) -> float:
     '''Logic to controll the light'''
     # Pause logic:
@@ -106,7 +122,7 @@ def control_light(plan, pause_status) -> float:
         return pause_status
 
     # The plan
-    if state_from_plan(light_plan):
+    if state_from_plan(plan):
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
         return pause_status
     
@@ -114,22 +130,66 @@ def control_light(plan, pause_status) -> float:
     GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
     return pause_status
 
-def main(light_plan, pump_plan, testing=False) -> None:
+def control_pumps(plan, pause_status) -> float:
+    '''Controll the pumps'''
+    # Pause logic:
+    # Pause logic:
+    pause_status, paused = is_paused(status=pause_status, pressed=GPIO.input(PUMP_PAUSE) is GPIO.LOW)
+    if paused:
+        GPIO.output(PUMP_RELE_LEFT, GPIO.LOW)
+        GPIO.output(PUMP_RELE_RIGHT, GPIO.LOW)
+        return pause_status
+
+    # The togle: 
+    togle_on_state = GPIO.input(PUMP_TOGLE_ON) is GPIO.LOW
+    togle_off_state = GPIO.input(PUMP_TOGLE_OFF) is GPIO.LOW
+    if togle_on_state: 
+        GPIO.output(PUMP_RELE_LEFT, GPIO.HIGH)
+        GPIO.output(PUMP_RELE_RIGHT, GPIO.HIGH)
+        return pause_status
+    if togle_off_state: 
+        GPIO.output(PUMP_RELE_LEFT, GPIO.LOW)
+        GPIO.output(PUMP_RELE_RIGHT, GPIO.LOW)
+        return pause_status
+
+    # The plan
+    if state_from_plan(plan):
+        pump_to_run = alternate_pumps()
+        if pump_to_run == 'left':
+            GPIO.output(PUMP_RELE_LEFT, GPIO.HIGH)
+            GPIO.output(PUMP_RELE_RIGHT, GPIO.LOW)
+        if pump_to_run == 'right': 
+            GPIO.output(PUMP_RELE_LEFT, GPIO.LOW)
+            GPIO.output(PUMP_RELE_RIGHT, GPIO.HIGH)
+        return pause_status
+    
+    # Off is not on
+    GPIO.output(PUMP_RELE_LEFT, GPIO.LOW)
+    GPIO.output(PUMP_RELE_RIGHT, GPIO.LOW)
+    return pause_status
+
+def main(light_plan, pump_plan, testing=True) -> None:
     '''The main function, runs the whole thing'''
     light_pause_status:float = -1
-    print('automation.py','Entering main loop')
+    print(__file__,'Entering main loop')
     while True:
-        if testing:
-            print('automation.py','-'*50)
-            print('automation.py','LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_ON))
-            print('automation.py','LIGHT_TOGLE_OFF', GPIO.input(LIGHT_TOGLE_OFF))
-            print('automation.py','LIGHT_PAUSE', GPIO.input(LIGHT_PAUSE))
-            print('automation.py','light_pause_status', light_pause_status)
-
         light_pause_status = control_light(plan=light_plan, pause_status=light_pause_status)
+        pump_plan_status = control_pumps(plan=pump_plan, pause_status=pump_plan_status)
+        if testing:
+            print('-'*60)
+            print(__file__, 'LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_ON))
+            print(__file__, 'LIGHT_TOGLE_OFF', GPIO.input(LIGHT_TOGLE_OFF))
+            print(__file__, 'LIGHT_PAUSE', GPIO.input(LIGHT_PAUSE))
+            print(__file__, 'PUMP_TOGLE_ON', GPIO.input(PUMP_TOGLE_ON))
+            print(__file__, 'PUMP_TOGLE_OFF', GPIO.input(PUMP_TOGLE_OFF))
+            print(__file__, 'PUMP_PAUSE', GPIO.input(PUMP_PAUSE))
+            print(__file__, 'FAN_ON', GPIO.input(FAN_ON))
+            print(__file__, 'FAN_OFF', GPIO.input(FAN_OFF))
+            print(__file__, 'RESET', GPIO.input(RESET))
+            time.sleep(1) #reduces the speed
 
         time.sleep(0.05) # To reduce load
-        if testing: time.sleep(1) #reduces the speed
+        
 
 
 if __name__ == '__main__': 
