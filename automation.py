@@ -12,7 +12,7 @@ pump_plan = [
 ]
 
 # Defining pins
-LIGHT_RELE_PLANT_WALL = 18
+LIGHT_RELE_PLANT_WALL = 20
 LIGHT_TOGLE_ON = 3
 LIGHT_TOGLE_OFF = 5
 LIGHT_PAUSE = 7
@@ -28,7 +28,7 @@ FAN_OFF = 21
 FAN_TACH = 10 # Not in use
 FAN_PWM = 12 # Not in use
 FAN_TRANSISTOR = 8 # Not in use
-FAN_RELE = 24 
+FAN_RELE = 26
 
 TEMP_DATA = 16
 RED_SWITCH = 23
