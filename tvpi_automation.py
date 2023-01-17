@@ -212,7 +212,6 @@ def main(light_plan, pump_plan, testing=True) -> None:
         time.sleep(0.05) # To reduce load
         
 
-
 if __name__ == '__main__': 
     try: 
         main(light_plan, pump_plan, testing=True)

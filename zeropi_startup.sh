@@ -1,0 +1,2 @@
+curl -o zeropi_startup.sh https://raw.githubusercontent.com/pippidis/livingroom_automation/main/zeropi_startup.sh # This file
+curl -o zeropi_automation.py https://raw.githubusercontent.com/pippidis/livingroom_automation/main/zeropi_automation.py
