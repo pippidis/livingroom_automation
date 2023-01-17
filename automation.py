@@ -25,13 +25,14 @@ PUMP_PAUSE = 15
 
 FAN_ON = 19
 FAN_OFF = 21
-FAN_TACH = 10
-FAN_PWM = 12
-FAN_TRANSISTOR = 8 
+FAN_TACH = 10 # Not in use
+FAN_PWM = 12 # Not in use
+FAN_TRANSISTOR = 8 # Not in use
+FAN_RELE = 24 
 
 TEMP_DATA = 16
 RED_SWITCH = 23
-RELE_4 = 22 # Not in use
+
 
 # Some standard variables
 PAUSE_DURATION = 7200 # secounds
@@ -53,13 +54,13 @@ GPIO.setup(PUMP_PAUSE, GPIO.IN)
 
 GPIO.setup(FAN_ON, GPIO.IN)
 GPIO.setup(FAN_OFF, GPIO.IN)
-GPIO.setup(FAN_TACH, GPIO.IN)
-GPIO.setup(FAN_PWM, GPIO.OUT)
-GPIO.setup(FAN_TRANSISTOR, GPIO.OUT)
+#GPIO.setup(FAN_TACH, GPIO.IN)
+#GPIO.setup(FAN_PWM, GPIO.OUT)
+#GPIO.setup(FAN_TRANSISTOR, GPIO.OUT)
 
 GPIO.setup(TEMP_DATA, GPIO.IN)
 GPIO.setup(RED_SWITCH, GPIO.IN)
-GPIO.setup(RELE_4, GPIO.OUT)
+GPIO.setup(FAN_RELE, GPIO.OUT)
 
 
 def is_paused(status:float=0, pressed:bool=False, when=None, duration:float=PAUSE_DURATION, latch:float=PAUSE_LATCH)-> tuple[float, bool]:
@@ -125,10 +126,12 @@ def control_light(plan, pause_status) -> float:
     togle_on_state = GPIO.input(LIGHT_TOGLE_ON) is GPIO.LOW
     togle_off_state = GPIO.input(LIGHT_TOGLE_OFF) is GPIO.LOW
     if togle_on_state: 
+        print(__file__, 'light toggeled on')
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
         return pause_status
     if togle_off_state: 
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
+        print(__file__, 'light toggeled off')
         return pause_status
 
     # The plan
@@ -181,11 +184,9 @@ def control_pumps(plan, pause_status) -> float:
 def control_fan() -> None:
     '''Controlls the fan'''
     if GPIO.input(FAN_ON) is GPIO.LOW: 
-        GPIO.output(FAN_PWM, GPIO.HIGH)
-        GPIO.output(FAN_TRANSISTOR, GPIO.HIGH)
+        GPIO.output(FAN_RELE, GPIO.HIGH)
     else: 
-        GPIO.output(FAN_PWM, GPIO.LOW)
-        GPIO.output(FAN_TRANSISTOR, GPIO.LOW)
+        GPIO.output(FAN_RELE, GPIO.LOW)
 
 
 def main(light_plan, pump_plan, testing=True) -> None:
@@ -197,10 +198,7 @@ def main(light_plan, pump_plan, testing=True) -> None:
         light_pause_status = control_light(plan=light_plan, pause_status=light_pause_status)
         pump_pause_status = control_pumps(plan=pump_plan, pause_status=pump_pause_status)
 
-        GPIO.output(FAN_PWM, GPIO.HIGH)
-        GPIO.output(FAN_TRANSISTOR, GPIO.HIGH)
-
-        #control_fan()
+        control_fan()
 
         if testing:
             print('-'*60)
