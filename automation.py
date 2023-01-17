@@ -204,7 +204,7 @@ def main(light_plan, pump_plan, testing=True) -> None:
             print(__file__, 'PUMP_PAUSE', GPIO.input(PUMP_PAUSE))
             print(__file__, 'FAN_ON', GPIO.input(FAN_ON))
             print(__file__, 'FAN_OFF', GPIO.input(FAN_OFF))
-            print(__file__, 'FAN_TACH', GPIO.input(FAN_TACH))
+            #print(__file__, 'FAN_TACH', GPIO.input(FAN_TACH))
             print(__file__, 'TEMP_DATA', GPIO.input(TEMP_DATA))
             print(__file__, 'RED_SWITCH', GPIO.input(RED_SWITCH))
             time.sleep(1) #reduces the speed
