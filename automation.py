@@ -116,6 +116,11 @@ def alternate_pumps(period:int=5) -> str:
     
 def control_light(plan, pause_status) -> float:
     '''Logic to controll the light'''
+    if GPIO.input(LIGHT_TOGLE_OFF) is GPIO.LOW: 
+        GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
+        print(__file__, 'light toggeled off')
+        return pause_status
+
     # Pause logic:
     pause_status, paused = is_paused(status=pause_status, pressed=GPIO.input(LIGHT_PAUSE) is GPIO.LOW)
     if paused:
@@ -123,17 +128,11 @@ def control_light(plan, pause_status) -> float:
         return pause_status
 
     # The togle: 
-    togle_on_state = GPIO.input(LIGHT_TOGLE_ON) is GPIO.LOW
-    togle_off_state = GPIO.input(LIGHT_TOGLE_OFF) is GPIO.LOW
-    if togle_on_state: 
+    if GPIO.input(LIGHT_TOGLE_ON) is GPIO.LOW: 
         print(__file__, 'light toggeled on')
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
         return pause_status
-    if togle_off_state: 
-        GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
-        print(__file__, 'light toggeled off')
-        return pause_status
-
+    
     # The plan
     if state_from_plan(plan):
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
@@ -145,27 +144,22 @@ def control_light(plan, pause_status) -> float:
 
 def control_pumps(plan, pause_status) -> float:
     '''Controll the pumps'''
-    # Pause logic:
-    # Pause logic:
+    if GPIO.input(PUMP_TOGLE_OFF) is GPIO.LOW: 
+        GPIO.output(PUMP_RELE_LEFT, GPIO.LOW)
+        GPIO.output(PUMP_RELE_RIGHT, GPIO.LOW)
+        return pause_status
+
     pause_status, paused = is_paused(status=pause_status, pressed=GPIO.input(PUMP_PAUSE) is GPIO.LOW)
     if paused:
         GPIO.output(PUMP_RELE_LEFT, GPIO.LOW)
         GPIO.output(PUMP_RELE_RIGHT, GPIO.LOW)
         return pause_status
 
-    # The togle: 
-    togle_on_state = GPIO.input(PUMP_TOGLE_ON) is GPIO.LOW
-    togle_off_state = GPIO.input(PUMP_TOGLE_OFF) is GPIO.LOW
-    if togle_on_state: 
+    if GPIO.input(PUMP_TOGLE_ON) is GPIO.LOW: 
         GPIO.output(PUMP_RELE_LEFT, GPIO.HIGH)
         GPIO.output(PUMP_RELE_RIGHT, GPIO.HIGH)
         return pause_status
-    if togle_off_state: 
-        GPIO.output(PUMP_RELE_LEFT, GPIO.LOW)
-        GPIO.output(PUMP_RELE_RIGHT, GPIO.LOW)
-        return pause_status
 
-    # The plan
     if state_from_plan(plan):
         pump_to_run = alternate_pumps()
         if pump_to_run == 'left':
@@ -176,7 +170,7 @@ def control_pumps(plan, pause_status) -> float:
             GPIO.output(PUMP_RELE_RIGHT, GPIO.HIGH)
         return pause_status
     
-    # Off is not on
+    # Off if not on
     GPIO.output(PUMP_RELE_LEFT, GPIO.LOW)
     GPIO.output(PUMP_RELE_RIGHT, GPIO.LOW)
     return pause_status
