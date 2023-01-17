@@ -196,7 +196,11 @@ def main(light_plan, pump_plan, testing=True) -> None:
     while True:
         light_pause_status = control_light(plan=light_plan, pause_status=light_pause_status)
         pump_pause_status = control_pumps(plan=pump_plan, pause_status=pump_pause_status)
-        control_fan()
+
+        GPIO.output(FAN_PWM, GPIO.HIGH)
+        GPIO.output(FAN_TRANSISTOR, GPIO.HIGH)
+
+        #control_fan()
 
         if testing:
             print('-'*60)
