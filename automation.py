@@ -12,21 +12,30 @@ pump_plan = [
 ]
 
 # Defining pins
-LIGHT_RELE_PLANT_WALL = 12
-LIGHT_TOGLE_ON = 7
-LIGHT_TOGLE_OFF = 11
-LIGHT_PAUSE = 13
+LIGHT_RELE_PLANT_WALL = 18
+LIGHT_TOGLE_ON = 3
+LIGHT_TOGLE_OFF = 5
+LIGHT_PAUSE = 7
 
-PUMP_RELE_LEFT = 16
-PUMP_RELE_RIGHT = 18
-PUMP_TOGLE_ON = 15
-PUMP_TOGLE_OFF = 19
-PUMP_PAUSE = 21 
+PUMP_RELE_LEFT = 22
+PUMP_RELE_RIGHT = 24
+PUMP_TOGLE_ON = 11
+PUMP_TOGLE_OFF = 13
+PUMP_PAUSE = 15
 
-FAN_ON = 26
-FAN_OFF = 24
-RESET = 23
+FAN_ON = 19
+FAN_OFF = 21
+FAN_TACH = 10
+FAN_PWM = 12
+FAN_TRANSISTOR = 8 
+
+TEMP_DATA = 16
+RED_SWITCH = 23
 RELE_4 = 22 # Not in use
+
+# Some standard variables
+PAUSE_DURATION = 7200 # secounds
+PAUSE_LATCH = 3 # secounds - How long before it can be reset
 
 # Setting up the board
 print(__file__,'Setting up GPIO')
@@ -44,12 +53,14 @@ GPIO.setup(PUMP_PAUSE, GPIO.IN)
 
 GPIO.setup(FAN_ON, GPIO.IN)
 GPIO.setup(FAN_OFF, GPIO.IN)
-GPIO.setup(RESET, GPIO.IN)
+GPIO.setup(FAN_TACH, GPIO.IN)
+GPIO.setup(FAN_PWM, GPIO.OUT)
+GPIO.setup(FAN_TRANSISTOR, GPIO.OUT)
+
+GPIO.setup(TEMP_DATA, GPIO.IN)
+GPIO.setup(RED_SWITCH, GPIO.IN)
 GPIO.setup(RELE_4, GPIO.OUT)
 
-# Some standard variables
-PAUSE_DURATION = 7200 # secounds
-PAUSE_LATCH = 3 # secounds - How long before it can be reset
 
 def is_paused(status:float=0, pressed:bool=False, when=None, duration:float=PAUSE_DURATION, latch:float=PAUSE_LATCH)-> tuple[float, bool]:
     '''Return of it is paused or not'''
@@ -167,6 +178,16 @@ def control_pumps(plan, pause_status) -> float:
     GPIO.output(PUMP_RELE_RIGHT, GPIO.LOW)
     return pause_status
 
+def control_fan() -> None:
+    '''Controlls the fan'''
+    if GPIO.input(FAN_ON) is GPIO.LOW: 
+        GPIO.output(FAN_PWM, GPIO.HIGH)
+        GPIO.output(FAN_TRANSISTOR, GPIO.HIGH)
+    else: 
+        GPIO.output(FAN_PWM, GPIO.LOW)
+        GPIO.output(FAN_TRANSISTOR, GPIO.LOW)
+
+
 def main(light_plan, pump_plan, testing=True) -> None:
     '''The main function, runs the whole thing'''
     light_pause_status:float = 0
@@ -175,6 +196,8 @@ def main(light_plan, pump_plan, testing=True) -> None:
     while True:
         light_pause_status = control_light(plan=light_plan, pause_status=light_pause_status)
         pump_pause_status = control_pumps(plan=pump_plan, pause_status=pump_pause_status)
+        control_fan()
+
         if testing:
             print('-'*60)
             print(__file__, 'LIGHT_TOGLE_ON', GPIO.input(LIGHT_TOGLE_ON))
@@ -185,7 +208,9 @@ def main(light_plan, pump_plan, testing=True) -> None:
             print(__file__, 'PUMP_PAUSE', GPIO.input(PUMP_PAUSE))
             print(__file__, 'FAN_ON', GPIO.input(FAN_ON))
             print(__file__, 'FAN_OFF', GPIO.input(FAN_OFF))
-            print(__file__, 'RESET', GPIO.input(RESET))
+            print(__file__, 'FAN_TACH', GPIO.input(FAN_TACH))
+            print(__file__, 'TEMP_DATA', GPIO.input(TEMP_DATA))
+            print(__file__, 'RED_SWITCH', GPIO.input(RED_SWITCH))
             time.sleep(1) #reduces the speed
 
         time.sleep(0.05) # To reduce load
