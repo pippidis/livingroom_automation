@@ -109,8 +109,8 @@ def state_from_plan(plan, when:float=datetime.now()) -> bool:
 def alternate_pumps(period:int=5) -> str:
     '''Alternate the two pumps based on the time'''
     minutes = time.time() / 60 # Get the number of minutes since the beginning of time
-    time_left = minutes % period
-    half_period = period / 2
+    time_left = minutes % period*2
+    half_period = period
     if time_left >= half_period: return 'left'
     return 'right'
     
