@@ -1,6 +1,7 @@
 import time
 import RPi.GPIO as GPIO
 from datetime import datetime
+import pytz
 
 # Defining plans
 light_plan = [
@@ -63,9 +64,6 @@ GPIO.setup(EXTRA_1, GPIO.IN)
 GPIO.setup(EXTRA_2, GPIO.IN)
 GPIO.setup(EXTRA_3, GPIO.IN)
 
-
-
-
 def is_paused(status:float=0, pressed:bool=False, when=None, duration:float=PAUSE_DURATION, latch:float=PAUSE_LATCH)-> tuple[float, bool]:
     '''Return of it is paused or not'''
     if not when: when = time.time() # sets the current time as when
@@ -100,7 +98,9 @@ def is_paused(status:float=0, pressed:bool=False, when=None, duration:float=PAUS
     # Fallback
     return status, False
 
-def state_from_plan(plan, when:float=datetime.now()) -> bool:
+def state_from_plan(plan, when:float=None) -> bool:
+    tz_OSLO = pytz.timezone('Europe/Oslo') 
+    if not when: when = datetime.now(tz_OSLO)
     '''returns the desired state the given plant now'''
     for period in plan: 
         on = when.replace(hour=period['on']['hr'], minute=period['on']['min'])
@@ -184,7 +184,6 @@ def control_fan() -> None:
     else: 
         GPIO.output(FAN_RELE, GPIO.LOW)
 
-
 def main(light_plan, pump_plan, testing=True) -> None:
     '''The main function, runs the whole thing'''
     light_pause_status:float = 0
@@ -214,10 +213,8 @@ def main(light_plan, pump_plan, testing=True) -> None:
             print(__file__, 'EXTRA_3', EXTRA_3,  GPIO.input(EXTRA_3))
 
             time.sleep(1) #reduces the speed
-
         time.sleep(0.05) # To reduce load
         
-
 if __name__ == '__main__': 
     try: 
         main(light_plan, pump_plan, testing=True)
