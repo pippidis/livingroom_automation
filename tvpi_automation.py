@@ -13,14 +13,14 @@ pump_plan = [
 
 # Defining pins
 LIGHT_RELE_PLANT_WALL = 18
-LIGHT_TOGLE_ON = 3
-LIGHT_TOGLE_OFF = 5
-LIGHT_PAUSE = 7
+LIGHT_TOGLE_ON = 10
+LIGHT_TOGLE_OFF = 12
+LIGHT_PAUSE = 16
 
 PUMP_RELE_LEFT = 22
 PUMP_RELE_RIGHT = 24
-PUMP_TOGLE_ON = 10
-PUMP_TOGLE_OFF = 12
+PUMP_TOGLE_ON = 5
+PUMP_TOGLE_OFF = 7
 PUMP_PAUSE = 16
 
 FAN_ON = 15
@@ -28,7 +28,7 @@ FAN_OFF = 13
 FAN_RELE = 26
 
 TEMP_DATA = 8
-RED_SWITCH = 11
+RED_SWITCH = 3
 
 EXTRA_1 = 19
 EXTRA_2 = 21
@@ -213,7 +213,7 @@ def main(light_plan, pump_plan, testing=True) -> None:
             print(__file__, 'EXTRA_2', EXTRA_2,  GPIO.input(EXTRA_2))
             print(__file__, 'EXTRA_3', EXTRA_3,  GPIO.input(EXTRA_3))
 
-            time.sleep(0.5) #reduces the speed
+            time.sleep(1) #reduces the speed
 
         time.sleep(0.05) # To reduce load
         
