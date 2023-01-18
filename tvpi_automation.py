@@ -9,7 +9,7 @@ light_plan = [
 ]
 
 pump_plan = [
-    {'on':{'hr':7, 'min':0}, 'off':{'hr':18, 'min':0}}
+    {'on':{'hr':7, 'min':0}, 'off':{'hr':8, 'min':0}}
 ]
 
 # Defining pins
