@@ -19,19 +19,16 @@ LIGHT_PAUSE = 7
 
 PUMP_RELE_LEFT = 22
 PUMP_RELE_RIGHT = 24
-PUMP_TOGLE_ON = 11
-PUMP_TOGLE_OFF = 13
-PUMP_PAUSE = 15
+PUMP_TOGLE_ON = 13
+PUMP_TOGLE_OFF = 15
+PUMP_PAUSE = 16
 
-FAN_ON = 19
-FAN_OFF = 21
-FAN_TACH = 10 # Not in use
-FAN_PWM = 12 # Not in use
-FAN_TRANSISTOR = 8 # Not in use
+FAN_ON = 15
+FAN_OFF = 13
 FAN_RELE = 26
 
-TEMP_DATA = 16
-RED_SWITCH = 23
+TEMP_DATA = 8
+RED_SWITCH = 3
 
 
 # Some standard variables
@@ -118,7 +115,6 @@ def control_light(plan, pause_status) -> float:
     '''Logic to controll the light'''
     if GPIO.input(LIGHT_TOGLE_OFF) is GPIO.LOW: 
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.LOW)
-        print(__file__, 'light toggeled off')
         return pause_status
 
     # Pause logic:
