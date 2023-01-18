@@ -217,7 +217,7 @@ def main(light_plan, pump_plan, testing=True) -> None:
         
 if __name__ == '__main__': 
     try: 
-        main(light_plan, pump_plan, testing=True)
+        main(light_plan, pump_plan, testing=False)
     except Exception as e:
         print('Something went wrong in the main loop', e) 
     finally:
