@@ -2,6 +2,8 @@ import time
 import RPi.GPIO as GPIO
 from datetime import datetime
 import pytz
+import sys
+import os
 
 # Defining plans
 light_plan = [
@@ -184,12 +186,23 @@ def control_fan() -> None:
     else: 
         GPIO.output(FAN_RELE, GPIO.LOW)
 
+def update() -> None:
+    '''Updates the rasberry pi if certian conditions are met'''
+    fan_toggle: bool = GPIO.input(FAN_OFF) is GPIO.LOW
+    pump_toggle: bool = GPIO.input(PUMP_TOGLE_OFF) is GPIO.LOW
+    light_toggle: bool = GPIO.input(LIGHT_TOGLE_OFF) is GPIO.LOW
+    red_button: bool = GPIO.input(RED_SWITCH) is GPIO.LOW
+    if fan_toggle and pump_toggle and light_toggle and red_button: 
+        os.system('bash tvpi_startup.sh &') # Starts the startup bash. The scripts waits for 1s before beginning
+        sys.exit("updating...") # exits the program
+        
 def main(light_plan, pump_plan, testing=True) -> None:
     '''The main function, runs the whole thing'''
     light_pause_status:float = 0
     pump_pause_status:float = 0
     print(__file__,'Entering main loop')
     while True:
+        update() # If the system should be updated
         light_pause_status = control_light(plan=light_plan, pause_status=light_pause_status)
         pump_pause_status = control_pumps(plan=pump_plan, pause_status=pump_pause_status)
 
