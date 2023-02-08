@@ -7,13 +7,17 @@
 # 4) Save and exit
 
 # Updating 
-#sleep 5 # Waiting for network to update the time
+echo "Running tvpi_setup.sh"
+echo "- Sleeping a bit"
+sleep 2 # Waiting for network to update the time
 sudo timedatectl set-timezone Europe/Oslo # Sets the timezone
 #sudo apt install python3-pip
 
 # Getting the files from github
+echo "- Downloading new files"
 curl -o tvpi_startup.sh https://raw.githubusercontent.com/pippidis/livingroom_automation/main/tvpi_startup.sh # This file
 curl -o tvpi_automation.py https://raw.githubusercontent.com/pippidis/livingroom_automation/main/tvpi_automation.py
 
 # Running the plant automation script
+echo "- Running the python automation script"
 python3 tvpi_automation.py  # Running in background mode (&)
