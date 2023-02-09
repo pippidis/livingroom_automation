@@ -27,7 +27,7 @@ mv temp/tvpi_startup.sh tvpi_startup.sh
 mv temp/test_video.mp4 test_video.mp4
 
 # Installing requirements
-sudo pip install --no-input temp/tvpi_requirements.txt
+pip install --no-input  -r temp/tvpi_requirements.txt
 
 sudo rm -r temp # Deleting the cloned folder
 

@@ -187,7 +187,8 @@ def update() -> None:
     red_button: bool = GPIO.input(RED_SWITCH) is GPIO.LOW
     if fan_toggle and pump_toggle and light_toggle and red_button: 
         os.system('bash tvpi_startup.sh') # Starts the startup bash. The scripts waits for 1s before beginning
-        sys.exit("updating...") # exits the program
+        raise Exception('updating...')
+        #sys.exit("updating...") # exits the program
         
 def main(light_plan, pump_plan, testing=True) -> None:
     '''The main function, runs the whole thing'''
