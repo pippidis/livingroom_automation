@@ -32,7 +32,6 @@ pip install --no-input  -r temp/tvpi_requirements.txt
 sudo rm -r temp # Deleting the cloned folder
 
 # Testing some video things
-vlc test_video.mp4 --overlay --no-video-deco --no-embedded-video --fullscreen --no-interact --intf dummy --repeat
 
 
 # Running the plant automation script
