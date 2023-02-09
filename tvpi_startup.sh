@@ -20,6 +20,7 @@ echo "- Downloading new files"
 #curl -o test_video.mp4 https://raw.githubusercontent.com/pippidis/livingroom_automation/main/test_video.mp4 # Test video for the media playing
 
 # Downloading via git
+
 git clone https://github.com/pippidis/livingroom_automation.git temp
 mv temp/tvpi_automation.py tvpi_automation.py
 mv temp/tvpi_startup.sh tvpi_startup.sh
