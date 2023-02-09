@@ -33,9 +33,6 @@ FAN_RELE = 16
 TEMP_DATA = 32
 RED_SWITCH = 31
 
-EXTRA_1 = 11
-EXTRA_2 = 13
-EXTRA_3 = 15
 
 # Some standard variables
 PAUSE_DURATION = 7200 # secounds
@@ -62,9 +59,6 @@ GPIO.setup(TEMP_DATA, GPIO.IN)
 GPIO.setup(RED_SWITCH, GPIO.IN)
 GPIO.setup(FAN_RELE, GPIO.OUT)
 
-GPIO.setup(EXTRA_1, GPIO.IN)
-GPIO.setup(EXTRA_2, GPIO.IN)
-GPIO.setup(EXTRA_3, GPIO.IN)
 
 def is_paused(status:float=0, pressed:bool=False, when=None, duration:float=PAUSE_DURATION, latch:float=PAUSE_LATCH)-> tuple[float, bool]:
     '''Return of it is paused or not'''
@@ -220,10 +214,6 @@ def main(light_plan, pump_plan, testing=True) -> None:
             print(__file__, 'FAN_OFF', FAN_OFF, GPIO.input(FAN_OFF))
             print(__file__, 'TEMP_DATA', TEMP_DATA, GPIO.input(TEMP_DATA))
             print(__file__, 'RED_SWITCH', RED_SWITCH,  GPIO.input(RED_SWITCH))
-
-            print(__file__, 'EXTRA_1', EXTRA_1,  GPIO.input(EXTRA_1))
-            print(__file__, 'EXTRA_2', EXTRA_2,  GPIO.input(EXTRA_2))
-            print(__file__, 'EXTRA_3', EXTRA_3,  GPIO.input(EXTRA_3))
 
             time.sleep(1) #reduces the speed
         time.sleep(0.05) # To reduce load
