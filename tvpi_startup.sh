@@ -22,7 +22,7 @@ echo "- Downloading new files"
 # Downloading via git
 git clone https://github.com/pippidis/livingroom_automation.git temp
 mv temp/tvpi_automation.py tvpi_automation.py
-mv temp/tvpi_startup.py tvpi_startup.py
+mv temp/tvpi_startup.py tvpi_startup.sh
 mv temp/test_video.mp4 test_video.mp4
 
 # Installing requirements
