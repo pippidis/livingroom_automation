@@ -14,7 +14,7 @@ pump_plan = [
     {'on':{'hr':7, 'min':0}, 'off':{'hr':8, 'min':0}}
 ]
 
-# Defining pins
+# Defining pins (# = confirmend)
 LIGHT_RELE_PLANT_WALL = 11 #
 LIGHT_TOGLE_ON =  19 #
 LIGHT_TOGLE_OFF = 21 #
