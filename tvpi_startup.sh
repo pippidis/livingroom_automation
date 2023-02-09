@@ -18,6 +18,8 @@ echo "- Downloading new files"
 curl -o tvpi_startup.sh https://raw.githubusercontent.com/pippidis/livingroom_automation/main/tvpi_startup.sh # This file
 curl -o tvpi_automation.py https://raw.githubusercontent.com/pippidis/livingroom_automation/main/tvpi_automation.py
 
+curl -o test_video.mp4 https://raw.githubusercontent.com/pippidis/livingroom_automation/main/test_video.mp4 # Test video for the media playing
+
 # Running the plant automation script
 echo "- Running the python automation script"
 python3 tvpi_automation.py  # Running in background mode (&)
