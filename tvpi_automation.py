@@ -70,14 +70,12 @@ def is_paused(status:float=0, pressed:bool=False, when=None, duration:float=PAUS
      
     # If in latch: 
     if time_from_status < PAUSE_LATCH:
-        print('In Latch')
         if status_is_positive: return status, True
         if status_is_negative: return status, False
         if status_is_null: return status, False
 
     # If the button is pressed: 
     if pressed: 
-        print('Pressed')
         if status_is_positive: return -when, False
         if status_is_negative: return when, True
         if status_is_null: return when, True
@@ -126,7 +124,6 @@ def control_light(plan, pause_status) -> float:
 
     # The togle: 
     if GPIO.input(LIGHT_TOGLE_ON) is GPIO.LOW: 
-        print(__file__, 'light toggeled on')
         GPIO.output(LIGHT_RELE_PLANT_WALL, GPIO.HIGH)
         return pause_status
     
@@ -187,10 +184,9 @@ def update() -> None:
     red_button: bool = GPIO.input(RED_SWITCH) is GPIO.LOW
     if fan_toggle and pump_toggle and light_toggle and red_button: 
         os.system('bash tvpi_startup.sh') # Starts the startup bash. The scripts waits for 1s before beginning
-        raise Exception('updating...')
-        #sys.exit("updating...") # exits the program
+        sys.exit("### Pulling new code from github ###") # exits the program
         
-def main(light_plan, pump_plan, testing=True) -> None:
+def main(light_plan, pump_plan, testing=False) -> None:
     '''The main function, runs the whole thing'''
     light_pause_status:float = 0
     pump_pause_status:float = 0
