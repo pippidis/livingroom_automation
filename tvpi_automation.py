@@ -202,7 +202,9 @@ def video_setup(source) -> tuple[vlc.Instance, list]:
 
 def video_control(media_player) -> None:
     is_playing = media_player.is_playing()
-    print(is_playing)
+    if not is_playing: 
+        print(is_playing) 
+        media_player.play()
 
 
 
