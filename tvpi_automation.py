@@ -197,6 +197,7 @@ def video_setup(source) -> tuple[vlc.Instance, list]:
      
     # setting media to the player
     player.set_media(media)
+    player.play()
     return player
 
 def video_control(media_player) -> None:
