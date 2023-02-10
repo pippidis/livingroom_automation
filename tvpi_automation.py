@@ -198,6 +198,7 @@ def video_setup(source) -> tuple[vlc.Instance, list]:
     # setting media to the player
     player.set_media(media)
     player.play()
+    time.sleep(1) #reduces the speed
     return player, vlc_instance
 
 def video_control(media_player, vlc_instance) -> None:
