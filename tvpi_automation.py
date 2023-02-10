@@ -187,12 +187,9 @@ def update() -> None:
         os.system('bash tvpi_startup.sh &') # Starts the startup bash. The scripts waits for 1s before beginning
         sys.exit("### Pulling new code from github ###") # exits the program
 
-def video(source):
-     
-    # creating a vlc instance
+def video_setup(source) -> tuple[vlc.Instance, list]:
+    # Setting up the vlc instance
     vlc_instance = vlc.Instance()
-     
-    # creating a media player
     player = vlc_instance.media_player_new()
      
     # creating a media
@@ -200,26 +197,22 @@ def video(source):
      
     # setting media to the player
     player.set_media(media)
-     
-    # play the video
-    player.play()
-     
-    # wait time
-    time.sleep(0.5)
-     
-    # getting the duration of the video
-    duration = player.get_length()
-     
-    # printing the duration of the video
-    print("Duration : " + str(duration))
+
+def video_control(media_player) -> None:
+    is_playing = media_player.is_playing()
+    print(is_playing)
+
+
 
 def main(light_plan, pump_plan, testing=False) -> None:
     '''The main function, runs the whole thing'''
     light_pause_status:float = 0
     pump_pause_status:float = 0
+    media_player = video_setup('test_video.mp4')
     print(__file__,'Entering main loop')
     while True:
         update() # If the system should be updated
+        video_control(media_player)
         light_pause_status = control_light(plan=light_plan, pause_status=light_pause_status)
         pump_pause_status = control_pumps(plan=pump_plan, pause_status=pump_pause_status)
 
