@@ -4,6 +4,7 @@ from datetime import datetime
 import pytz
 import sys
 import os
+import vlc
 
 # Defining plans
 light_plan = [
@@ -185,7 +186,12 @@ def update() -> None:
     if fan_toggle and pump_toggle and light_toggle and red_button: 
         os.system('bash tvpi_startup.sh &') # Starts the startup bash. The scripts waits for 1s before beginning
         sys.exit("### Pulling new code from github ###") # exits the program
-        
+
+def run_video(testing=True) -> None:
+    '''Runs the video'''
+
+
+
 def main(light_plan, pump_plan, testing=False) -> None:
     '''The main function, runs the whole thing'''
     light_pause_status:float = 0
@@ -216,6 +222,8 @@ def main(light_plan, pump_plan, testing=False) -> None:
         
 if __name__ == '__main__': 
     try: 
+        media = vlc.MediaPlay("test_video.mp4")
+        media.play()
         main(light_plan, pump_plan, testing=False)
     except Exception as e:
         print(__file__,'Something went wrong in the main loop', e) 

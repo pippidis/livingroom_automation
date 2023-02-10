@@ -22,8 +22,8 @@ echo "- Downloading new files"
 # Downloading via git
 
 git clone https://github.com/pippidis/livingroom_automation.git temp
-mv temp/tvpi_automation.py tvpi_automation.py
-mv temp/tvpi_startup.sh tvpi_startup.sh
+mv temp/tvpi_automation.py automation.py
+mv temp/tvpi_startup.sh startup.sh
 mv temp/test_video.mp4 test_video.mp4
 
 # Installing requirements
@@ -36,4 +36,4 @@ sudo rm -r temp # Deleting the cloned folder
 
 # Running the plant automation script
 echo "- Running the python automation script"
-python3 tvpi_automation.py  # Running in background mode (&)
+python3 automation.py  # Running in background mode (&)
