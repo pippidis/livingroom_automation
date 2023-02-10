@@ -26,6 +26,8 @@ mv temp/tvpi_automation.py automation.py
 mv temp/tvpi_startup.sh startup.sh
 mv temp/test_video.mp4 test_video.mp4
 
+mv temp/sample-mp4-file-small.mp4 sample-mp4-file-small.mp4
+
 # Installing requirements
 pip install --no-input  -r temp/tvpi_requirements.txt
 

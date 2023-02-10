@@ -198,12 +198,14 @@ def video_setup(source) -> tuple[vlc.Instance, list]:
     # setting media to the player
     player.set_media(media)
     player.play()
-    return player
+    return player, vlc_instance
 
-def video_control(media_player) -> None:
+def video_control(media_player, vlc_instance) -> None:
     is_playing = media_player.is_playing()
     if not is_playing: 
         print('test', is_playing) 
+        media = vlc_instance.media_new('sample-mp4-file-small.mp4')
+        media_player.set_media(media)
         media_player.play()
 
 
@@ -212,11 +214,11 @@ def main(light_plan, pump_plan, testing=False) -> None:
     '''The main function, runs the whole thing'''
     light_pause_status:float = 0
     pump_pause_status:float = 0
-    media_player = video_setup('test_video.mp4')
+    media_player, vlc_instance  = video_setup('test_video.mp4')
     print(__file__,'Entering main loop')
     while True:
         update() # If the system should be updated
-        video_control(media_player)
+        video_control(media_player, vlc_instance)
         light_pause_status = control_light(plan=light_plan, pause_status=light_pause_status)
         pump_pause_status = control_pumps(plan=pump_plan, pause_status=pump_pause_status)
 
