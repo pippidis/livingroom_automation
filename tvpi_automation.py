@@ -188,6 +188,16 @@ def update() -> None:
         sys.exit("### Pulling new code from github ###") # exits the program
 
 def video_setup(source) -> tuple[vlc.Instance, list]:
+    '''
+    TODO: 
+        - Copy files to folder
+        - find acceptable files
+        - create list of files
+        - find out how to update files - switch with new ones
+        - implemnt red-buton
+        - autoplay
+        - overlay
+    '''
     # Setting up the vlc instance
     vlc_instance = vlc.Instance()
     player = vlc_instance.media_player_new()
@@ -205,6 +215,7 @@ def video_control(media_player, vlc_instance) -> None:
     is_playing = media_player.is_playing()
     if not is_playing: 
         print('test', is_playing) 
+        media_player.video_set_marquee_string(' THIS IS A TEST !!!!!!!!!!!!!!!!!')
         media = vlc_instance.media_new('sample-mp4-file-small.mp4')
         media_player.set_media(media)
         media_player.play()
