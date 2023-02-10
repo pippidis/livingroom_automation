@@ -187,10 +187,31 @@ def update() -> None:
         os.system('bash tvpi_startup.sh &') # Starts the startup bash. The scripts waits for 1s before beginning
         sys.exit("### Pulling new code from github ###") # exits the program
 
-def run_video(testing=True) -> None:
-    '''Runs the video'''
-
-
+def video(source):
+     
+    # creating a vlc instance
+    vlc_instance = vlc.Instance()
+     
+    # creating a media player
+    player = vlc_instance.media_player_new()
+     
+    # creating a media
+    media = vlc_instance.media_new(source)
+     
+    # setting media to the player
+    player.set_media(media)
+     
+    # play the video
+    player.play()
+     
+    # wait time
+    time.sleep(0.5)
+     
+    # getting the duration of the video
+    duration = player.get_length()
+     
+    # printing the duration of the video
+    print("Duration : " + str(duration))
 
 def main(light_plan, pump_plan, testing=False) -> None:
     '''The main function, runs the whole thing'''
@@ -222,8 +243,7 @@ def main(light_plan, pump_plan, testing=False) -> None:
         
 if __name__ == '__main__': 
     try: 
-        media = vlc.MediaPlay("test_video.mp4")
-        media.play()
+        video('test_video.mp4')
         main(light_plan, pump_plan, testing=False)
     except Exception as e:
         print(__file__,'Something went wrong in the main loop', e) 
