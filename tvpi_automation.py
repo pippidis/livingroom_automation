@@ -227,11 +227,12 @@ def main(light_plan, pump_plan, testing=False) -> None:
     '''The main function, runs the whole thing'''
     light_pause_status:float = 0
     pump_pause_status:float = 0
+    video_latch:float = 0
     media_player, vlc_instance  = video_setup('test_video.mp4')
     print(__file__,'Entering main loop')
     while True:
         update() # If the system should be updated
-        latch_time = video_control(media_player, vlc_instance, latch_time)
+        video_latch = video_control(media_player, vlc_instance, video_latch)
         light_pause_status = control_light(plan=light_plan, pause_status=light_pause_status)
         pump_pause_status = control_pumps(plan=pump_plan, pause_status=pump_pause_status)
 
