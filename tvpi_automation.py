@@ -213,13 +213,12 @@ def video_setup(source) -> tuple[vlc.Instance, list]:
 
 def video_control(media_player, vlc_instance) -> None:
     is_playing = media_player.is_playing()
-    if not is_playing: 
+    red_button: bool = GPIO.input(RED_SWITCH) is GPIO.LOW
+    if not is_playing or red_button: 
         print('test', is_playing) 
         media = vlc_instance.media_new('sample-mp4-file-small.mp4')
         media_player.set_media(media)
         media_player.play()
-
-
 
 def main(light_plan, pump_plan, testing=False) -> None:
     '''The main function, runs the whole thing'''
