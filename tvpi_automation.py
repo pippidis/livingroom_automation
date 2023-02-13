@@ -70,7 +70,7 @@ def is_paused(status:float=0, pressed:bool=False, when=None, duration:float=PAUS
     status_is_null = status == 0
      
     # If in latch: 
-    if time_from_status < PAUSE_LATCH:
+    if time_from_status < latch:
         if status_is_positive: return status, True
         if status_is_negative: return status, False
         if status_is_null: return status, False
@@ -211,14 +211,17 @@ def video_setup(source) -> tuple[vlc.Instance, list]:
     time.sleep(1) #reduces the speed
     return player, vlc_instance
 
-def video_control(media_player, vlc_instance) -> None:
+def video_control(media_player, vlc_instance, latch_time:float, latch=PAUSE_LATCH) -> float:
     is_playing = media_player.is_playing()
     red_button: bool = GPIO.input(RED_SWITCH) is GPIO.LOW
-    if not is_playing or red_button: 
+    in_latch = time.time() - latch_time < PAUSE_LATCH
+    if not is_playing or red_button and not in_latch: 
         print('test', is_playing) 
         media = vlc_instance.media_new('sample-mp4-file-small.mp4')
         media_player.set_media(media)
         media_player.play()
+        return time.time()
+    return latch_time
 
 def main(light_plan, pump_plan, testing=False) -> None:
     '''The main function, runs the whole thing'''
@@ -228,7 +231,7 @@ def main(light_plan, pump_plan, testing=False) -> None:
     print(__file__,'Entering main loop')
     while True:
         update() # If the system should be updated
-        video_control(media_player, vlc_instance)
+        latch_time = video_control(media_player, vlc_instance, latch_time)
         light_pause_status = control_light(plan=light_plan, pause_status=light_pause_status)
         pump_pause_status = control_pumps(plan=pump_plan, pause_status=pump_pause_status)
 
