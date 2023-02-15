@@ -228,7 +228,7 @@ def detect_usb_stick():
     '''Identify if there is a usb stick plugged in'''
     usb_devices = subprocess.check_output(["lsusb"])
     print(usb_devices)
-    if "USB Stick" in usb_devices.decode("utf-8"):
+    if "JPL_04" in usb_devices.decode("utf-8"):
         print("USB Stick Detected")
     else:
         print("USB Stick Not Detected")
