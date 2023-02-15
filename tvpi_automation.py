@@ -223,16 +223,26 @@ def video_control(media_player, vlc_instance, latch_time:float, latch=PAUSE_LATC
         return time.time()
     return latch_time
 
+def detect_usb_stick():
+    '''Identify if there is a usb stick plugged in'''
+    usb_devices = subprocess.check_output(["lsusb"])
+    print(usb_devices)
+    if "USB Stick" in usb_devices.decode("utf-8"):
+        print("USB Stick Detected")
+    else:
+        print("USB Stick Not Detected")
+
 def main(light_plan, pump_plan, testing=False) -> None:
     '''The main function, runs the whole thing'''
     light_pause_status:float = 0
     pump_pause_status:float = 0
     video_latch:float = 0
-    media_player, vlc_instance  = video_setup('test_video.mp4')
+    #media_player, vlc_instance  = video_setup('test_video.mp4')
     print(__file__,'Entering main loop')
     while True:
+        detect_usb_stick() # under test
         update() # If the system should be updated
-        video_latch = video_control(media_player, vlc_instance, video_latch)
+        #video_latch = video_control(media_player, vlc_instance, video_latch)
         light_pause_status = control_light(plan=light_plan, pause_status=light_pause_status)
         pump_pause_status = control_pumps(plan=pump_plan, pause_status=pump_pause_status)
 
@@ -256,7 +266,7 @@ def main(light_plan, pump_plan, testing=False) -> None:
         
 if __name__ == '__main__': 
     try: 
-        main(light_plan, pump_plan, testing=False)
+        main(light_plan, pump_plan, testing=True)
     except Exception as e:
         print(__file__,'Something went wrong in the main loop', e) 
     finally:
