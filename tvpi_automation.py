@@ -241,7 +241,7 @@ def main(light_plan, pump_plan, testing=False) -> None:
     #media_player, vlc_instance  = video_setup('test_video.mp4')
     print(__file__,'Entering main loop')
     while True:
-        detect_usb_stick() # under test
+        #detect_usb_stick() # under test
         update() # If the system should be updated
         #video_latch = video_control(media_player, vlc_instance, video_latch)
         light_pause_status = control_light(plan=light_plan, pause_status=light_pause_status)
